@@ -1,9 +1,15 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import {
+  DynamicModule,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SecondConfigModule } from 'src/components/config/config.module';
 import { SecondConfigService } from 'src/components/config/config.service';
 import { Customer } from 'src/components/customer/entity/customer.entity';
 import { Order } from 'src/components/order/entity/order.entity';
+import { TransactionMiddleware } from '../middleware/transaction.middleware';
 
 @Module({
   imports: [
@@ -28,7 +34,11 @@ import { Order } from 'src/components/order/entity/order.entity';
     }),
   ],
 })
-export class DatabaseModule {
+export class DatabaseModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(TransactionMiddleware).forRoutes('*');
+  }
+
   static forRoot(): DynamicModule {
     return {
       module: DatabaseModule,
