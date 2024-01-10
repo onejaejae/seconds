@@ -10,6 +10,7 @@ import { SecondConfigService } from 'src/components/config/config.service';
 import { Customer } from 'src/components/customer/entity/customer.entity';
 import { Order } from 'src/components/order/entity/order.entity';
 import { TransactionMiddleware } from '../middleware/transaction.middleware';
+import { TransactionManager } from './transaction.manager';
 
 @Module({
   imports: [
@@ -33,6 +34,8 @@ import { TransactionMiddleware } from '../middleware/transaction.middleware';
       },
     }),
   ],
+  providers: [TransactionManager],
+  exports: [TransactionManager],
 })
 export class DatabaseModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

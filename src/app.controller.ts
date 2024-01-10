@@ -15,7 +15,7 @@ export class AppController {
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  getHello(@UploadedFile() file: FileType): string {
-    return this.appService.getHello(file);
+  async getHello(@UploadedFile() file: FileType): Promise<string> {
+    return await this.appService.getHello(file);
   }
 }
