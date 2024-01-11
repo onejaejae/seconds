@@ -28,7 +28,7 @@ import { TransactionManager } from './transaction.manager';
           database: dbConfig.DB_DATABASE,
           entities: [Customer, Order],
           synchronize: false,
-          logging: true,
+          logging: false,
           charset: 'utf8mb4',
         };
       },

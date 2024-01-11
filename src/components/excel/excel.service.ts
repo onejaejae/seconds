@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SheetType } from 'src/types/excel';
 import * as XLSX from 'xlsx';
+import * as moment from 'moment-timezone';
 import { Customer } from '../customer/entity/customer.entity';
 import { Order } from '../order/entity/order.entity';
 import { FileType } from 'src/types/common';
@@ -27,8 +28,15 @@ export class ExcelService {
       case SheetType.ORDER:
         for (const row of rows) {
           const values = Object.keys(row).map((key) => row[key]);
-          const [customerId, orderedAt, orderType] = values;
-          result.push(new Order(customerId, orderedAt, orderType));
+          const [customerId, orderedAt, orderType, amount] = values;
+          result.push(
+            new Order(
+              customerId,
+              this.abjustTime(orderedAt),
+              orderType,
+              amount,
+            ),
+          );
         }
         break;
       default:
@@ -37,12 +45,26 @@ export class ExcelService {
     return result;
   }
 
+  private abjustTime(orderedAt: Date) {
+    const utcDate = moment.utc(orderedAt);
+    const adjustedDate = utcDate.set({
+      hour: 15,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    });
+    return adjustedDate.toDate();
+  }
+
   private excelToJson(sheet: XLSX.WorkSheet) {
     return XLSX.utils.sheet_to_json(sheet, { defval: null });
   }
 
   excelToEntity(file: FileType) {
-    const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+    const workbook = XLSX.read(file.buffer, {
+      type: 'buffer',
+      cellDates: true,
+    });
 
     return workbook.SheetNames.map((sheetName: SheetType) => {
       const sheet = workbook.Sheets[sheetName];

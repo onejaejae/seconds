@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityTarget, Repository } from 'typeorm';
 import { TransactionManager } from './transaction.manager';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export abstract class SecondBaseRepository<T> {
@@ -14,6 +15,10 @@ export abstract class SecondBaseRepository<T> {
   async createEntity(model: T): Promise<T> {
     const res = await this.getRepository().save(model);
     return plainToInstance(this.classType, res);
+  }
+
+  async bulkInsert(model: Array<QueryDeepPartialEntity<T>>): Promise<any> {
+    return this.getRepository().insert(model);
   }
 
   protected getRepository(): Repository<T> {
