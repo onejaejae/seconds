@@ -30,4 +30,9 @@ export class AppService {
       }
     }
   }
+
+  async getHello2(): Promise<any> {
+    const res = await this.orderRepository.getMonthlySalesStatistics();
+    console.log('res', res);
+  }
 }

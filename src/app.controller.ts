@@ -18,4 +18,9 @@ export class AppController {
   async getHello(@UploadedFile() file: FileType): Promise<string> {
     return await this.appService.getHello(file);
   }
+
+  @Get()
+  async getHello2(): Promise<any> {
+    return await this.appService.getHello2();
+  }
 }
