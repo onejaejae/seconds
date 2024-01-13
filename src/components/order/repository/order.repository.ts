@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { SecondBaseRepository } from 'src/common/database/base.repository';
 import { TransactionManager } from 'src/common/database/transaction.manager';
 import { Between, EntityTarget } from 'typeorm';
-import { Order } from '../entity/order.entity';
+import { GetOrderList, Order } from '../entity/order.entity';
 import { OrderType } from 'src/types/order';
+import { TransformPlainToInstance } from 'class-transformer';
 
 @Injectable()
 export class OrderRepository extends SecondBaseRepository<Order> {
@@ -44,5 +45,49 @@ export class OrderRepository extends SecondBaseRepository<Order> {
       .getRawMany();
 
     return result;
+  }
+
+  @TransformPlainToInstance(GetOrderList)
+  async getOrderList(
+    startDate: Date,
+    endDate: Date,
+    orderType: number,
+    customerId: number,
+    pageSize: number,
+    pageNo: number,
+  ): Promise<GetOrderList[]> {
+    const queryBuilder = this.getQueryBuilder()
+      .select('order.ordered_at', 'orderedAt')
+      .addSelect('order.order_type', 'orderType')
+      .addSelect('order.amount', 'orderAmount')
+      .addSelect('order.id', 'orderId')
+      .addSelect('customer.name', 'customerName')
+      .addSelect('customer.grade', 'customerGrade')
+      .leftJoin('order.Customer', 'customer')
+      .andWhere('order.orderedAt >= :startDate', { startDate })
+      .andWhere('order.orderedAt <= :endDate', { endDate })
+      .orderBy('order.orderedAt', 'DESC');
+
+    switch (orderType) {
+      case 0:
+        queryBuilder.andWhere('order.orderType = :orderType', {
+          orderType: OrderType.ORDER,
+        });
+        break;
+      case 1:
+        queryBuilder.andWhere('order.orderType = :orderType', {
+          orderType: OrderType.REFUND,
+        });
+        break;
+    }
+
+    if (customerId) {
+      queryBuilder.andWhere('order.customerId = :customerId', { customerId });
+    }
+
+    return queryBuilder
+      .skip((pageNo - 1) * pageSize)
+      .take(pageSize)
+      .getRawMany();
   }
 }

@@ -6,6 +6,8 @@ import { OrderRepository } from './components/order/repository/order.repository'
 import { Customer } from './components/customer/entity/customer.entity';
 import { Order } from './components/order/entity/order.entity';
 import { Transactional } from './common/decorator/transaction.decorator';
+import { OrderListDto } from './components/order/dto/request/order.list.dto';
+import { OrderListResponseDto } from './components/order/dto/response/order.list.response.dto';
 
 @Injectable()
 export class AppService {
@@ -34,5 +36,23 @@ export class AppService {
   async getHello2(): Promise<any> {
     const res = await this.orderRepository.getMonthlySalesStatistics();
     console.log('res', res);
+  }
+
+  async getHello3(
+    orderListDto: OrderListDto,
+  ): Promise<Array<OrderListResponseDto>> {
+    const { startDate, endDate, orderType, customerId, pageSize, pageNo } =
+      orderListDto;
+
+    const orderList = await this.orderRepository.getOrderList(
+      startDate,
+      endDate,
+      orderType,
+      customerId,
+      pageSize,
+      pageNo,
+    );
+
+    return OrderListResponseDto.of(orderList);
   }
 }

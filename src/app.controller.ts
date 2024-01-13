@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Post,
@@ -8,6 +9,8 @@ import {
 import { AppService } from './app.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileType } from './types/common';
+import { OrderListDto } from './components/order/dto/request/order.list.dto';
+import { OrderListResponseDto } from './components/order/dto/response/order.list.response.dto';
 
 @Controller()
 export class AppController {
@@ -17,6 +20,13 @@ export class AppController {
   @UseInterceptors(FileInterceptor('file'))
   async getHello(@UploadedFile() file: FileType): Promise<string> {
     return await this.appService.getHello(file);
+  }
+
+  @Post('/test')
+  async getHello3(
+    @Body() orderListDto: OrderListDto,
+  ): Promise<Array<OrderListResponseDto>> {
+    return this.appService.getHello3(orderListDto);
   }
 
   @Get()
