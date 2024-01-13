@@ -37,12 +37,10 @@ export class OrderRepository extends SecondBaseRepository<Order> {
 
     // Main query
     return this.getQueryBuilder()
-      .select([
-        `${subQueryAlias}.year AS year`,
-        `${subQueryAlias}.month AS month`,
-        `SUM(${subQueryAlias}.refund_amount) AS totalRefundAmount`,
-        `SUM(${subQueryAlias}.order_amount) AS totalOrderAmount`,
-      ])
+      .select(`${subQueryAlias}.year`, 'year')
+      .addSelect(`${subQueryAlias}.month`, 'month')
+      .addSelect(`SUM(${subQueryAlias}.refund_amount)`, 'totalRefundAmount')
+      .addSelect(`SUM(${subQueryAlias}.order_amount)`, 'totalOrderAmount')
       .innerJoin(`(${subQuery})`, subQueryAlias, 'order.id = tmp.id')
       .groupBy('year, month')
       .setParameters({ refundType: OrderType.REFUND })
