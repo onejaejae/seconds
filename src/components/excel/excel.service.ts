@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { SheetType } from 'src/types/excel';
-import * as XLSX from 'xlsx';
 import * as moment from 'moment-timezone';
 import { Customer } from '../customer/entity/customer.entity';
 import { Order } from '../order/entity/order.entity';

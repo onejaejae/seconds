@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { LocalDateTransformer } from 'src/common/util/dateTransformer';
 import { Customer } from 'src/components/customer/entity/customer.entity';
 import { OrderType } from 'src/types/order';
@@ -58,4 +59,15 @@ export class GetOrderList {
   customerGrade: string;
   orderType: OrderType;
   orderedAt: Date;
+}
+
+export class OrderMonthlySalesStat {
+  @Type(() => Number)
+  year: number;
+  @Type(() => Number)
+  month: number;
+  @Type(() => Number)
+  totalRefundAmount: number;
+  @Type(() => Number)
+  totalOrderAmount: number;
 }

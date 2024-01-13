@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { SecondBaseRepository } from 'src/common/database/base.repository';
 import { TransactionManager } from 'src/common/database/transaction.manager';
 import { Between, EntityTarget } from 'typeorm';
-import { GetOrderList, Order } from '../entity/order.entity';
+import {
+  GetOrderList,
+  Order,
+  OrderMonthlySalesStat,
+} from '../entity/order.entity';
 import { OrderType } from 'src/types/order';
 import { TransformPlainToInstance } from 'class-transformer';
 
@@ -16,7 +20,8 @@ export class OrderRepository extends SecondBaseRepository<Order> {
     return Order.name;
   }
 
-  async getMonthlySalesStatistics(): Promise<any[]> {
+  @TransformPlainToInstance(OrderMonthlySalesStat)
+  async getMonthlySalesStatistics(): Promise<OrderMonthlySalesStat[]> {
     const subQueryAlias = 'tmp';
 
     // Creating a subquery
