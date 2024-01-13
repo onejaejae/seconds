@@ -5,10 +5,17 @@ import { Customer } from '../customer/entity/customer.entity';
 import { Order } from '../order/entity/order.entity';
 import { FileType } from 'src/types/common';
 import { ExcelHelperProvider } from './excel.helper.provider';
+import { Transactional } from 'src/common/decorator/transaction.decorator';
+import { CustomerRepository } from '../customer/repository/customer.repository';
+import { OrderRepository } from '../order/repository/order.repository';
 
 @Injectable()
 export class ExcelService {
-  constructor(private readonly excelHelperProvider: ExcelHelperProvider) {}
+  constructor(
+    private readonly excelHelperProvider: ExcelHelperProvider,
+    private readonly customerRepository: CustomerRepository,
+    private readonly orderRepository: OrderRepository,
+  ) {}
 
   private jsonToEntity(
     sheetName: SheetType,
@@ -55,7 +62,7 @@ export class ExcelService {
     return adjustedDate.toDate();
   }
 
-  excelToEntity(file: FileType) {
+  private excelToEntity(file: FileType) {
     const workbook = this.excelHelperProvider.createWorkbook(file);
 
     return workbook.SheetNames.map((sheetName: SheetType) => {
@@ -63,5 +70,21 @@ export class ExcelService {
       const json = this.excelHelperProvider.excelToJson(sheet);
       return this.jsonToEntity(sheetName, json);
     });
+  }
+
+  @Transactional()
+  async processAndSaveExcelData(file: FileType): Promise<any> {
+    const allEntities = this.excelToEntity(file);
+
+    for (const targetEntities of allEntities) {
+      const targetEntity = targetEntities[0];
+      if (targetEntity instanceof Customer) {
+        const customerEntities = targetEntities as Customer[];
+        await this.customerRepository.bulkInsert(customerEntities);
+      } else if (targetEntity instanceof Order) {
+        const orderEntities = targetEntities as Order[];
+        await this.orderRepository.bulkInsert(orderEntities);
+      }
+    }
   }
 }

@@ -1,14 +1,18 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { DatabaseModule } from './common/database/database.module';
 import { ExcelModule } from './components/excel/excel.module';
 import { CustomerModule } from './components/customer/customer.module';
 import { OrderModule } from './components/order/order.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ErrorInterceptor } from './common/interceptor/error.interceptor';
 
 @Module({
   imports: [DatabaseModule.forRoot(), ExcelModule, CustomerModule, OrderModule],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ErrorInterceptor,
+    },
+  ],
 })
-export class AppModule {}
+export class Modules {}
