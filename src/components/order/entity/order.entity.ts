@@ -50,3 +50,12 @@ export class Order {
     this.amount = amount;
   }
 }
+
+export class GetOrderList {
+  orderId: number;
+  orderAmount: number;
+  customerName: string;
+  customerGrade: string;
+  orderType: OrderType;
+  orderedAt: Date;
+}
