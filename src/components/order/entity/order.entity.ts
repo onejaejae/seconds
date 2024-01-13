@@ -1,3 +1,4 @@
+import { LocalDateTransformer } from 'src/common/util/dateTransformer';
 import { Customer } from 'src/components/customer/entity/customer.entity';
 import { OrderType } from 'src/types/order';
 import {
@@ -10,18 +11,20 @@ import {
 
 @Entity({ database: 'second', name: 'orders' })
 export class Order {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @Column('int', { name: 'customer_id' })
+  @Column('int', { name: 'customer_id', nullable: true })
   customerId: number;
 
-  @Column({ name: 'amount', type: Number })
+  @Column({ name: 'amount', nullable: false })
   amount: number;
 
   @Column({
     type: 'timestamptz',
     name: 'ordered_at',
+    nullable: false,
+    transformer: new LocalDateTransformer(),
   })
   orderedAt: Date;
 
@@ -32,7 +35,7 @@ export class Order {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn([{ name: 'customerId', referencedColumnName: 'id' }])
+  @JoinColumn([{ name: 'customer_id', referencedColumnName: 'id' }])
   Customer: Customer;
 
   constructor(
