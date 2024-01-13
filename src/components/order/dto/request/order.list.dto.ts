@@ -2,7 +2,7 @@ import { Transform } from 'class-transformer';
 import { IsDate, IsNumber, IsOptional } from 'class-validator';
 import * as moment from 'moment-timezone';
 
-export class OrderListDto {
+export class OrderListQueryDto {
   @Transform(({ value }) => moment(value).toDate())
   @IsDate()
   startDate: Date;

@@ -36,7 +36,7 @@ export class OrderRepository extends SecondBaseRepository<Order> {
       .getQuery();
 
     // Main query
-    const result = await this.getQueryBuilder()
+    return this.getQueryBuilder()
       .select([
         `${subQueryAlias}.year AS year`,
         `${subQueryAlias}.month AS month`,
@@ -48,8 +48,6 @@ export class OrderRepository extends SecondBaseRepository<Order> {
       .setParameters({ refundType: OrderType.REFUND })
       .orderBy('year, month')
       .getRawMany();
-
-    return result;
   }
 
   @TransformPlainToInstance(GetOrderList)
