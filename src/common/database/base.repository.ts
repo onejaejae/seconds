@@ -12,13 +12,8 @@ export abstract class SecondBaseRepository<T> {
 
   abstract getName(): EntityTarget<T>;
 
-  async createEntity(model: T): Promise<T> {
-    const res = await this.getRepository().save(model);
-    return plainToInstance(this.classType, res);
-  }
-
-  async bulkInsert(model: Array<QueryDeepPartialEntity<T>>): Promise<any> {
-    return this.getRepository().insert(model);
+  async bulkInsert(model: Array<QueryDeepPartialEntity<T>>): Promise<void> {
+    await this.getRepository().insert(model);
   }
 
   protected getRepository(): Repository<T> {

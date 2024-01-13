@@ -1,12 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { OrderRepository } from './repository/order.repository';
+import { Inject, Injectable } from '@nestjs/common';
 import { OrderListQueryDto } from './dto/request/order.list.dto';
 import { OrderListResponseDto } from './dto/response/order.list.response.dto';
 import { OrderMonthlySalesStat } from './entity/order.entity';
+import { DEPENDENCY } from 'src/common/const/dependencyKey';
+import { IOrderRepository } from './interface/order.repository.interface';
 
 @Injectable()
 export class OrderService {
-  constructor(private readonly orderRepository: OrderRepository) {}
+  constructor(
+    @Inject(DEPENDENCY.ORDER.ORDER_REPOSITORY_KEY)
+    private readonly orderRepository: IOrderRepository,
+  ) {}
 
   async getOrderList(
     orderListQueryDto: OrderListQueryDto,

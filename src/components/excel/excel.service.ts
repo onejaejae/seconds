@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { SheetType } from 'src/types/excel';
 import * as moment from 'moment-timezone';
 import { Customer } from '../customer/entity/customer.entity';
@@ -8,13 +8,16 @@ import { ExcelHelperProvider } from './excel.helper.provider';
 import { Transactional } from 'src/common/decorator/transaction.decorator';
 import { CustomerRepository } from '../customer/repository/customer.repository';
 import { OrderRepository } from '../order/repository/order.repository';
+import { DEPENDENCY } from 'src/common/const/dependencyKey';
+import { IOrderRepository } from '../order/interface/order.repository.interface';
 
 @Injectable()
 export class ExcelService {
   constructor(
     private readonly excelHelperProvider: ExcelHelperProvider,
     private readonly customerRepository: CustomerRepository,
-    private readonly orderRepository: OrderRepository,
+    @Inject(DEPENDENCY.ORDER.ORDER_REPOSITORY_KEY)
+    private readonly orderRepository: IOrderRepository,
   ) {}
 
   private jsonToEntity(
