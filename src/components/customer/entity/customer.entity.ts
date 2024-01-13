@@ -4,13 +4,13 @@ import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
 @Entity({ database: 'second', name: 'customers' })
 export class Customer {
-  @PrimaryColumn()
+  @PrimaryColumn({ unsigned: true })
   id: number;
 
-  @Column('varchar', { name: 'name', length: 30 })
+  @Column('varchar', { name: 'name', length: 30, nullable: false })
   name: string;
 
-  @Column('enum', { name: 'grade', enum: GradeType })
+  @Column('enum', { name: 'grade', enum: GradeType, nullable: false })
   grade: GradeType;
 
   @OneToMany(() => Order, (order) => order.Customer)
