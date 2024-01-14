@@ -1,7 +1,7 @@
-import { OrderType } from 'src/types/order';
 import * as moment from 'moment-timezone';
 import { Exclude, Expose } from 'class-transformer';
 import { GetOrderList } from '../../entity/order.entity';
+import { OrderType } from 'src/types/order';
 
 export class OrderListResponseDto {
   @Exclude() private _orderId: number;
