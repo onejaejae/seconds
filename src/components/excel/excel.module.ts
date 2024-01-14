@@ -11,10 +11,15 @@ const excelService: ClassProvider = {
   useClass: ExcelService,
 };
 
+const excelHelperProvider: ClassProvider = {
+  provide: DEPENDENCY.EXCEL.EXCEL_HELPER_PROVIDER_KEY,
+  useClass: ExcelHelperProvider,
+};
+
 @Module({
   imports: [OrderModule, CustomerModule],
   controllers: [ExcelController],
-  providers: [excelService, ExcelHelperProvider],
+  providers: [excelService, excelHelperProvider],
   exports: [excelService],
 })
 export class ExcelModule {}

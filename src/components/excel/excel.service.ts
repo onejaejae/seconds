@@ -10,11 +10,13 @@ import { DEPENDENCY } from 'src/common/const/dependencyKey';
 import { IOrderRepository } from '../order/interface/order.repository.interface';
 import { ICustomerRepository } from '../customer/interface/customer.repository.interface';
 import { IExcelService } from './interface/excel.service.interface';
+import { IExcelHelperProvider } from './interface/excel.helper.provider.interface';
 
 @Injectable()
 export class ExcelService implements IExcelService {
   constructor(
-    private readonly excelHelperProvider: ExcelHelperProvider,
+    @Inject(DEPENDENCY.EXCEL.EXCEL_HELPER_PROVIDER_KEY)
+    private readonly excelHelperProvider: IExcelHelperProvider,
     @Inject(DEPENDENCY.CUSTOMER.CUSTOMER_REPOSITORY_KEY)
     private readonly customerRepository: ICustomerRepository,
     @Inject(DEPENDENCY.ORDER.ORDER_REPOSITORY_KEY)
