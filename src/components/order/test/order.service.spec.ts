@@ -3,7 +3,7 @@ import { IOrderService } from '../interface/order.service.interface';
 import { IOrderRepository } from '../interface/order.repository.interface';
 import { OrderService } from '../order.service';
 import { GetOrderList, OrderMonthlySalesStat } from '../entity/order.entity';
-import { OrderListQueryDto } from '../dto/request/order.list.dto';
+import { OrderListQueryDto } from '../dto/request/order.list.query.dto';
 import { OrderListResponseDto } from '../dto/response/order.list.response.dto';
 
 describe('order service', () => {

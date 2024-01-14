@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { OrderListQueryDto } from './dto/request/order.list.dto';
+import { OrderListQueryDto } from './dto/request/order.list.query.dto';
 import { OrderListResponseDto } from './dto/response/order.list.response.dto';
 import { OrderMonthlySalesStat } from './entity/order.entity';
 import { DEPENDENCY } from 'src/common/const/dependencyKey';
