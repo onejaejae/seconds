@@ -9,9 +9,13 @@ import {
 } from '../entity/order.entity';
 import { OrderType } from 'src/types/order';
 import { TransformPlainToInstance } from 'class-transformer';
+import { IOrderRepository } from '../interface/order.repository.interface';
 
 @Injectable()
-export class OrderRepository extends SecondBaseRepository<Order> {
+export class OrderRepository
+  extends SecondBaseRepository<Order>
+  implements IOrderRepository
+{
   constructor(protected readonly txManager: TransactionManager) {
     super(Order);
   }

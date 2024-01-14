@@ -6,16 +6,17 @@ import { Order } from '../order/entity/order.entity';
 import { FileType } from 'src/types/common';
 import { ExcelHelperProvider } from './excel.helper.provider';
 import { Transactional } from 'src/common/decorator/transaction.decorator';
-import { CustomerRepository } from '../customer/repository/customer.repository';
-import { OrderRepository } from '../order/repository/order.repository';
 import { DEPENDENCY } from 'src/common/const/dependencyKey';
 import { IOrderRepository } from '../order/interface/order.repository.interface';
+import { ICustomerRepository } from '../customer/interface/customer.repository.interface';
+import { IExcelService } from './interface/excel.service.interface';
 
 @Injectable()
-export class ExcelService {
+export class ExcelService implements IExcelService {
   constructor(
     private readonly excelHelperProvider: ExcelHelperProvider,
-    private readonly customerRepository: CustomerRepository,
+    @Inject(DEPENDENCY.CUSTOMER.CUSTOMER_REPOSITORY_KEY)
+    private readonly customerRepository: ICustomerRepository,
     @Inject(DEPENDENCY.ORDER.ORDER_REPOSITORY_KEY)
     private readonly orderRepository: IOrderRepository,
   ) {}
@@ -76,7 +77,7 @@ export class ExcelService {
   }
 
   @Transactional()
-  async processAndSaveExcelData(file: FileType): Promise<any> {
+  async processAndSaveExcelData(file: FileType): Promise<void> {
     const allEntities = this.excelToEntity(file);
 
     for (const targetEntities of allEntities) {
