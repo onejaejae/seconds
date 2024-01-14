@@ -90,15 +90,74 @@ CONSTRAINT customer_order_fk FOREIGN KEY (customer_id) REFERENCES customers (id)
 - excel import 기능을 담당하는 ExcelHelperProvider 구현
 - ExcelHelperProvider를 주입받아 excel 데이터를 받은 뒤 비즈니스 로직을 처리하는 ExcelService 구현
 
+#### 예시 코드
+
+```
+
+@Injectable()
+export class ExcelHelperProvider implements IExcelHelperProvider {
+  private readonly xlsx: typeof XLSX;
+
+  constructor() {
+    this.xlsx = XLSX;
+  }
+
+  createWorkbook(file: FileType) {
+    return this.xlsx.read(file.buffer, {
+      type: 'buffer',
+      cellDates: true,
+    });
+  }
+
+  excelToJson(sheet: XLSX.WorkSheet) {
+    return XLSX.utils.sheet_to_json(sheet, { defval: null });
+  }
+}
+```
+
+```
+@Injectable()
+export class ExcelService implements IExcelService {
+  constructor(
+    @Inject(DEPENDENCY.EXCEL.EXCEL_HELPER_PROVIDER_KEY)
+    private readonly excelHelperProvider: IExcelHelperProvider,
+    @Inject(DEPENDENCY.CUSTOMER.CUSTOMER_REPOSITORY_KEY)
+    private readonly customerRepository: ICustomerRepository,
+    @Inject(DEPENDENCY.ORDER.ORDER_REPOSITORY_KEY)
+    private readonly orderRepository: IOrderRepository,
+  ) {}
+
+  // ...
+
+  @Transactional()
+  async processAndSaveExcelData(file: FileType): Promise<void> {
+    const allEntities = this.excelToEntity(file);
+
+    for (const targetEntities of allEntities) {
+      const targetEntity = targetEntities[0];
+      if (targetEntity instanceof Customer) {
+        const customerEntities = targetEntities as Customer[];
+        await this.customerRepository.bulkInsert(customerEntities);
+      } else if (targetEntity instanceof Order) {
+        const orderEntities = targetEntities as Order[];
+        await this.orderRepository.bulkInsert(orderEntities);
+      }
+    }
+  }
+}
+```
+
 <br>
 
 ### 월별 매출 통계 API
 
 #### enpoint
 
-- POST http://localhost:3000/orders/stat
+- GET http://localhost:3000/orders/stat
 
 #### 구현 방식
+
+- TypeORM의 createQueryBuilder method를 사용해, 비즈니스 요구사항을 구현하기 위한 쿼리 작성
 
 - 월별 매출 통계 기능을 수행하기 위한 getMonthlySalesStatistics method를 OrderRepository에 구현
 
@@ -145,6 +204,8 @@ CONSTRAINT customer_order_fk FOREIGN KEY (customer_id) REFERENCES customers (id)
 
 #### 구현 방식
 
+- class-validator를 사용해 데코레이터 기반 Dto 검증
+- ValidationPipe의 transform option을 통해 요청 객체 역직렬화
 - OrderListQueryDto를 구현하여, validation 및 default 값 설정
 
 #### 예시 코드
@@ -174,6 +235,8 @@ export class OrderListQueryDto {
 }
 
 ```
+
+#### 구현 방식
 
 - orderedAt(주문일자) 값이 DB에는 `timestamptz` 형식으로 저장되어있기 때문에 결과 값 반환 시 `YYYY-MM-DD` 형식으로 반환해주어야합니다.
 
@@ -233,6 +296,9 @@ export class OrderListResponseDto {
 }
 ```
 
+#### 구현 방식
+
+- TypeORM의 createQueryBuilder method를 사용해, 비즈니스 요구사항을 구현하기 위한 쿼리 작성
 - query parameter의 값에 따라 동적으로 filter를 적용하여 order 리스트를 가져오는 기능을 구현하는 getOrderList method를 OrderRepository에 구현
 
 #### 예시 코드
