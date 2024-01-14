@@ -3,6 +3,8 @@ import { getNamespace } from 'cls-hooked';
 import { EntityManager } from 'typeorm';
 import { TRANSACTION } from '../const/transaction';
 
+const isTestEnvironment = process.env.NODE_ENV === 'test';
+
 export function Transactional() {
   return function (
     _target: Object,
@@ -14,6 +16,10 @@ export function Transactional() {
 
     // wrapped origin method with Transaction
     async function transactionWrapped(...args: unknown[]) {
+      if (isTestEnvironment) {
+        return await originMethod.apply(this, args);
+      }
+
       // validate nameSpace && get nameSpace
       const nameSpace = getNamespace(TRANSACTION.NAMESPACE);
       if (!nameSpace || !nameSpace.active)

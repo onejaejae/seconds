@@ -4,7 +4,6 @@ import * as moment from 'moment-timezone';
 import { Customer } from '../customer/entity/customer.entity';
 import { Order } from '../order/entity/order.entity';
 import { FileType } from 'src/types/common';
-import { ExcelHelperProvider } from './excel.helper.provider';
 import { Transactional } from 'src/common/decorator/transaction.decorator';
 import { DEPENDENCY } from 'src/common/const/dependencyKey';
 import { IOrderRepository } from '../order/interface/order.repository.interface';
@@ -74,6 +73,7 @@ export class ExcelService implements IExcelService {
     return workbook.SheetNames.map((sheetName: SheetType) => {
       const sheet = workbook.Sheets[sheetName];
       const json = this.excelHelperProvider.excelToJson(sheet);
+
       return this.jsonToEntity(sheetName, json);
     });
   }

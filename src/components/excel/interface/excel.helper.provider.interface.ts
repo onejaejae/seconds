@@ -1,6 +1,7 @@
 import { FileType } from 'src/types/common';
+import * as XLSX from 'xlsx';
 
 export interface IExcelHelperProvider {
-  createWorkbook(file: FileType);
-  excelToJson(sheet: any);
+  createWorkbook(file: FileType): XLSX.WorkBook;
+  excelToJson(sheet: XLSX.WorkSheet);
 }
